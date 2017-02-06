@@ -1,0 +1,179 @@
+<head>
+    <script src="https://use.fontawesome.com/1be2411c64.js"></script>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            margin: auto;
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .board {
+            width: 400px;
+            margin: auto;
+        }
+        .row {
+            display: flex;
+            flex-direction: row;
+            width: 180px;
+            }
+        .col {
+            flex: 1;
+            height: 60px;
+            font-family: Arial, Helvetica, sans-serif;
+            text-align: center;
+            line-height: 60px;
+            -user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            
+        }
+        .leftborder {
+            border-left: 1px solid black;
+        }
+        .rightborder {
+            border-right: 1px solid black;
+        }
+        .topborder {
+            border-top: 1px solid black;
+        }
+        .bottomborder {
+            border-bottom: 1px solid black;
+        }
+        #win {
+            /*font-size:60px;*/
+            text-align: center;
+            padding-top: 100px;
+            font-family: Arial, sans-serif;
+            -user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            letter-spacing: 4px;
+        }
+      
+        .fa {
+            font-size: 20px !important;
+        }
+        #choose {
+            text-align: center;
+            padding-top: 100px;
+            font-family: Arial, sans-serif;
+            -user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            letter-spacing: 4px;
+        }
+    </style>
+    <script>
+        player = "X";
+        bot = "O";
+        board = [0,0,0,0,0,0,0,0,0]
+        turn = player;
+        won = 0;
+        Array.prototype.random = function () {
+        return this[Math.floor((Math.random()*this.length))];
+        }
+
+        function comp() {
+            if (won==0) {
+            choices = [];
+            for (let i=0; i<board.length; i++) {
+                if (board[i]==0) {
+                    choices.push(i);
+                    }            
+                }
+            console.log(choices);
+            move = choices.random();
+            document.getElementById(move).innerHTML=bot;
+            board[move] = bot;
+            turn=player;
+            checkBoard();
+            }
+        }
+
+        function placePiece(cellid){
+            if (won==0) {
+            if (document.getElementById(cellid).innerHTML==""){
+            if (turn == "X") {
+                document.getElementById(cellid).innerHTML="X";
+                turn = "O";
+                board[cellid] = "X";
+            } else if (turn == "O") {
+                document.getElementById(cellid).innerHTML="O";
+                turn = "X";
+                board[cellid] = "O";
+            }
+            }  
+            }
+            checkBoard();
+            setTimeout(comp, 400);
+        }
+        function checkWon(piece) {
+            if ((board[0]==piece && board[1]==piece && board[2]==piece) || (board[3]==piece && board[4]==piece && board[5]==piece)||(board[6]==piece && board[7]==piece && board[8]==piece)||(board[0]==piece && board[3]==piece && board[6]==piece)||(board[1]==piece && board[4]==piece && board[7]==piece)||(board[2]==piece && board[5]==piece && board[8]==piece)||(board[0]==piece && board[4]==piece && board[8]==piece)||(board[6]==piece && board[4]==piece && board[2]==piece)) {
+                document.getElementById("win").innerHTML=piece.toLowerCase() + " won !<br><br><i class='fa fa-refresh fa-spin fa-pulse' aria-hidden='true'></i>";
+                won=1;
+            }
+        }
+        function checkBoard() {
+            checkWon("X");
+            checkWon("O");
+            if (board.indexOf(0)==-1) {
+                document.getElementById("win").innerHTML="tie !<br><br><i class='fa fa-refresh fa-spin fa-pulse' aria-hidden='true'></i>";
+                won=1;
+            }
+        }
+        function resetBoard() {
+            for (let i=0; i<board.length; i++) {
+                document.getElementById(i).innerHTML="";
+                document.getElementById("win").innerHTML="";
+                board[i]=0;
+            }
+            won = 0;
+            turn=player;
+            document.getElementById("choose").style.display = 'block';
+        }
+        function choice(piece) {
+            player = piece;
+            turn = player;
+            if (player == "X") {
+                bot = "O";
+            } else {
+                bot = "X";
+            }
+            document.getElementById("choose").style.display = 'none';
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="board row">
+            <div id="0" class="col rightborder bottomborder" onclick="placePiece(this.id)"></div>
+            <div id="1" class="col leftborder rightborder bottomborder" onclick="placePiece(this.id)"></div>
+            <div id="2" class="col leftborder bottomborder" onclick="placePiece(this.id)"></div>
+        </div>
+        <div class="board row">
+            <div id="3" class="col bottomborder topborder rightborder" onclick="placePiece(this.id)"></div>
+            <div id="4" class="col bottomborder topborder leftborder rightborder" onclick="placePiece(this.id)"></div>
+            <div id="5" class="col leftborder bottomborder topborder" onclick="placePiece(this.id)"></div>
+        </div>
+        <div class="board row">
+            <div id="6" class="col topborder rightborder" onclick="placePiece(this.id)"></div>
+            <div id="7" class="col leftborder topborder rightborder"onclick="placePiece(this.id)"></div>
+            <div id="8" class="col leftborder topborder" onclick="placePiece(this.id)"></div>
+        </div>
+    </div>
+    <div id="win" onclick="resetBoard()"></div>
+    <div id="choose"><span onclick="choice('X');">x</span> or <span onclick="choice('O')">o</span> ?</div>
+
+    
+</body>
